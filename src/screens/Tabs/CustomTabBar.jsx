@@ -1,16 +1,28 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Animated from 'react-native-reanimated';
+import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 import {BOTTOM_TAB_HEIGHT, Colors} from '../../utils/Constants';
 import ScalePress from '../../components/ui/ScalePress';
 import {HomeTabIcon, LibraryTabIcon, SearchTabIcon} from './TabIcon';
+import {useSharedState} from '../../hooks/useSharedState';
 
 const CustomTabBar = ({state, navigation}) => {
   const safeAreaInsets = useSafeAreaInsets();
+  const {translationY} = useSharedState();
+
+  const animateStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{translateY: -translationY.value}],
+    };
+  });
   return (
     <Animated.View
-      style={[styles.tabBarContainer, {paddingBottom: safeAreaInsets.bottom}]}>
+      style={[
+        styles.tabBarContainer,
+        animateStyle,
+        {paddingBottom: safeAreaInsets.bottom},
+      ]}>
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
 
