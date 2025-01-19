@@ -23,7 +23,9 @@ const CustomText = ({
         styles.text,
         {color: Colors.text, fontSize: computedFontSize, fontFamily},
         style,
-      ]}>
+      ]}
+      numberOfLines={numberOfLines}
+      {...props}>
       {children}
     </Text>
   );

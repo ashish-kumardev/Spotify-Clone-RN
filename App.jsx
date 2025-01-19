@@ -2,16 +2,20 @@ import 'react-native-gesture-handler';
 import Navigation from './src/navigation/Navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useEffect} from 'react';
-import {LogBox, Platform} from 'react-native';
-import TrackPlayer from 'react-native-track-player';
+import {setupPlayer} from './src/service/PlaybackService';
 
 // LogBox.ignoreAllLogs();
 const App = () => {
-  // useEffect(() => {
-  //   if (Platform.OS === 'android') {
-  //     TrackPlayer.setupPlayer();
+  useEffect(() => {
+    setupPlayer();
+  }, []);
+
+  // const setupPlayerFirstTime = async () => {
+  //   const isSetup = await setupPlayer();
+  //   if (!isSetup) {
+  //     await TrackPlayer.setupPlayer();
   //   }
-  // }, []);
+  // };
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Navigation />

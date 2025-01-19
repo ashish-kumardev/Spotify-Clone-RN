@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {BOTTOM_TAB_HEIGHT} from '../../utils/Constants';
 import {Platform, StyleSheet, View} from 'react-native';
 import {screenHeight} from '../../utils/Scaling';
@@ -17,6 +17,7 @@ import Animated, {
 import {useSharedState} from '../../hooks/useSharedState';
 import FullScreenPlayer from './FullScreenPlayer';
 import AirPlayer from './AirPlayer';
+import {usePlayerStore} from '../../state/usePlayerStore';
 
 const MIN_PLAYER_HEIGHT = BOTTOM_TAB_HEIGHT + 60;
 const MAX_PLAYER_HEIGHT = screenHeight;
@@ -29,33 +30,29 @@ const withPlayer = WrappedComponent => {
     const {translationY} = useSharedState();
     const isExpanded = useSharedValue(false);
     const isScroll = useSharedValue(false);
+    const {currentPlayingTrack} = usePlayerStore();
 
     const scrollRef = useRef(null);
 
-    // useEffect(() => {
-    //   translationY.value = withTiming(0, {duration: 0});
-    // }, [translationY]);
-
     // for ios
-    // const onScroll = useAnimatedScrollHandler({
-    //   onBeginDrag({contentOffset}) {
-    //     console.log({contentOffset: contentOffset.y});
-    //     if (contentOffset.y === 0) {
-    //       isScroll.value = false;
-    //     }
-    //   },
-    //   onEndDrag({contentOffset}) {
-    //     if (contentOffset.y === 0) {
-    //       isScroll.value = false;
-    //     }
-    //   },
-    //   onMomentumEnd({contentOffset}) {
-    //     if (contentOffset.y === 0) {
-    //       isScroll.value = false;
-    //     }
-    //   },
-    // });
-    const onScroll = () => {};
+    const onScroll = useAnimatedScrollHandler({
+      onBeginDrag({contentOffset}) {
+        console.log({contentOffset: contentOffset.y});
+        if (contentOffset.y === 0) {
+          isScroll.value = false;
+        }
+      },
+      onEndDrag({contentOffset}) {
+        if (contentOffset.y === 0) {
+          isScroll.value = false;
+        }
+      },
+      onMomentumEnd({contentOffset}) {
+        if (contentOffset.y === 0) {
+          isScroll.value = false;
+        }
+      },
+    });
 
     const panGesture = Gesture.Pan()
       .onChange(() => {
@@ -132,43 +129,45 @@ const withPlayer = WrappedComponent => {
     return (
       <View style={styles.container}>
         <WrappedComponent {...props} />
-        <GestureDetector gesture={combinedGesture}>
-          <Animated.View
-            style={[styles.playerContainer, animatedContainerStyles]}>
-            {Platform.OS === 'ios' ? (
-              <Animated.ScrollView
-                ref={scrollRef}
-                persistentScrollbar
-                pinchGestureEnabled
-                bounces={false}
-                showsVerticalScrollIndicator={false}
-                scrollEventThrottle={1}
-                onScroll={onScroll}
-                contentContainerStyle={styles.expandedPlayer}
-                style={expandedOpacityStyle}>
-                <FullScreenPlayer />
-              </Animated.ScrollView>
-            ) : (
-              <Animated.View style={expandedOpacityStyle}>
-                <ScrollView
-                  nestedScrollEnabled
+        {currentPlayingTrack && (
+          <GestureDetector gesture={combinedGesture}>
+            <Animated.View
+              style={[styles.playerContainer, animatedContainerStyles]}>
+              {Platform.OS === 'ios' ? (
+                <Animated.ScrollView
+                  ref={scrollRef}
                   persistentScrollbar
                   pinchGestureEnabled
                   bounces={false}
                   showsVerticalScrollIndicator={false}
                   scrollEventThrottle={1}
-                  contentContainerStyle={styles.expandedPlayer}>
+                  onScroll={onScroll}
+                  contentContainerStyle={styles.expandedPlayer}
+                  style={expandedOpacityStyle}>
                   <FullScreenPlayer />
-                </ScrollView>
-              </Animated.View>
-            )}
+                </Animated.ScrollView>
+              ) : (
+                <Animated.View style={expandedOpacityStyle}>
+                  <ScrollView
+                    nestedScrollEnabled
+                    persistentScrollbar
+                    pinchGestureEnabled
+                    bounces={false}
+                    showsVerticalScrollIndicator={false}
+                    scrollEventThrottle={1}
+                    contentContainerStyle={styles.expandedPlayer}>
+                    <FullScreenPlayer />
+                  </ScrollView>
+                </Animated.View>
+              )}
 
-            <Animated.View
-              style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
-              <AirPlayer />
+              <Animated.View
+                style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
+                <AirPlayer />
+              </Animated.View>
             </Animated.View>
-          </Animated.View>
-        </GestureDetector>
+          </GestureDetector>
+        )}
       </View>
     );
   });

@@ -1,10 +1,11 @@
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Colors} from '../../utils/Constants';
 
 const CustomSafeAreaView = ({children, style}) => {
   return (
     <View style={[styles.container, style]}>
+      <StatusBar backgroundColor={Colors.background} />
       <SafeAreaView />
       {children}
     </View>

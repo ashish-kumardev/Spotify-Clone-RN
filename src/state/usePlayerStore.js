@@ -21,7 +21,7 @@ export const usePlayerStore = create()(
       setCurrentPlayingTrack: async track => {
         const {allTracks} = get();
         await TrackPlayer.reset();
-        set({currentPlayingTrack: track});
+        set(() => ({currentPlayingTrack: track}));
         const currentTrackConverted = convertTrack(track);
         const otherTracks = allTracks
           .filter(t => t.id !== track.id)
@@ -32,7 +32,7 @@ export const usePlayerStore = create()(
       play: async () => {
         const {currentPlayingTrack, allTracks} = get();
         const activeTrack = await TrackPlayer.getActiveTrack();
-
+        console.log({activeTrack});
         if (activeTrack) {
           await TrackPlayer.play();
         } else {
