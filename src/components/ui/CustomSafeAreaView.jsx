@@ -5,7 +5,7 @@ import {Colors} from '../../utils/Constants';
 const CustomSafeAreaView = ({children, style}) => {
   return (
     <View style={[styles.container, style]}>
-      <StatusBar backgroundColor={Colors.background} />
+      {/* <StatusBar backgroundColor={Colors.background} translucent /> */}
       <SafeAreaView />
       {children}
     </View>

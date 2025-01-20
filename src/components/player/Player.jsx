@@ -56,13 +56,13 @@ const withPlayer = WrappedComponent => {
 
     const panGesture = Gesture.Pan()
       .onChange(() => {
-        // console.log({isScroll: isScroll.value}, 'onChange...........');
+        // console.log({translationY: translationY.value}, 'onChange...........');
         if (translationY.value <= -602) {
+          console.log({isScroll: isScroll.value}, 'onChange...........');
           isScroll.value = true;
         }
       })
       .onUpdate(event => {
-        // console.log({event: event.translationY}, 'onUpdate............');
         translationY.value = Math.max(
           Math.min(
             event.translationY +
@@ -71,13 +71,9 @@ const withPlayer = WrappedComponent => {
           ),
           -MAX_PLAYER_HEIGHT + MIN_PLAYER_HEIGHT,
         );
-        // console.log(
-        //   {translationY: translationY.value},
-        //   'onUpdate.............',
-        // );
       })
       .onEnd(event => {
-        // console.log({event: event.translationY}, 'onEnd.......');
+        console.log({event: event.translationY}, 'onEnd.......');
         if (event?.translationY < -MIN_PLAYER_HEIGHT / 2) {
           isExpanded.value = true;
           translationY.value = withTiming(
@@ -87,6 +83,7 @@ const withPlayer = WrappedComponent => {
         } else {
           isExpanded.value = false;
           translationY.value = withTiming(0, {duration: 300});
+          // isScroll.value = false;
         }
       })
       .enabled(!isScroll.value);
@@ -98,6 +95,8 @@ const withPlayer = WrappedComponent => {
         [MAX_PLAYER_HEIGHT, MIN_PLAYER_HEIGHT],
         'clamp',
       );
+
+      // console.log({height});
 
       return {
         height,
@@ -117,56 +116,55 @@ const withPlayer = WrappedComponent => {
 
     const expandedOpacityStyle = useAnimatedStyle(() => {
       const opacity = interpolate(translationY.value, [-2, 0], [1, 0], 'clamp');
-
       return {
         opacity,
         display: translationY.value > -2 ? 'none' : 'flex',
       };
     });
 
-    const combinedGesture = Gesture.Simultaneous(panGesture, Gesture.Native());
+    // const combinedGesture = Gesture.Simultaneous(Gesture.Native(), panGesture);
 
     return (
       <View style={styles.container}>
         <WrappedComponent {...props} />
         {currentPlayingTrack && (
-          <GestureDetector gesture={combinedGesture}>
-            <Animated.View
-              style={[styles.playerContainer, animatedContainerStyles]}>
-              {Platform.OS === 'ios' ? (
-                <Animated.ScrollView
-                  ref={scrollRef}
-                  persistentScrollbar
-                  pinchGestureEnabled
-                  bounces={false}
-                  showsVerticalScrollIndicator={false}
-                  scrollEventThrottle={1}
-                  onScroll={onScroll}
-                  contentContainerStyle={styles.expandedPlayer}
-                  style={expandedOpacityStyle}>
-                  <FullScreenPlayer />
-                </Animated.ScrollView>
-              ) : (
-                <Animated.View style={expandedOpacityStyle}>
-                  <ScrollView
-                    nestedScrollEnabled
-                    persistentScrollbar
-                    pinchGestureEnabled
-                    bounces={false}
-                    showsVerticalScrollIndicator={false}
-                    scrollEventThrottle={1}
-                    contentContainerStyle={styles.expandedPlayer}>
-                    <FullScreenPlayer />
-                  </ScrollView>
-                </Animated.View>
-              )}
-
-              <Animated.View
-                style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
-                <AirPlayer />
-              </Animated.View>
+          // <GestureDetector gesture={combinedGesture}>
+          <Animated.View
+            style={[styles.playerContainer, animatedContainerStyles]}>
+            {/* {Platform.OS === 'ios' ? (
+              <Animated.ScrollView
+                ref={scrollRef}
+                persistentScrollbar
+                pinchGestureEnabled
+                bounces={false}
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={1}
+                onScroll={onScroll}
+                contentContainerStyle={styles.expandedPlayer}
+                style={expandedOpacityStyle}>
+                <FullScreenPlayer />
+              </Animated.ScrollView>
+            ) : ( */}
+            <Animated.View style={[expandedOpacityStyle]}>
+              <ScrollView
+                nestedScrollEnabled
+                persistentScrollbar
+                pinchGestureEnabled
+                bounces={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[styles.expandedPlayer]}
+                scrollEventThrottle={1}>
+                <FullScreenPlayer />
+              </ScrollView>
             </Animated.View>
-          </GestureDetector>
+            {/* )} */}
+
+            <Animated.View
+              style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
+              <AirPlayer />
+            </Animated.View>
+          </Animated.View>
+          // </GestureDetector>
         )}
       </View>
     );
@@ -179,7 +177,6 @@ const styles = StyleSheet.create({
   },
   expandedPlayer: {
     alignItems: 'center',
-    backgroundColor: '#444',
   },
   playerContainer: {
     position: 'absolute',
@@ -187,7 +184,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 1,
     overflow: 'hidden',
-    backgroundColor: 'transparent',
   },
   collapsedPlayer: {
     justifyContent: 'center',

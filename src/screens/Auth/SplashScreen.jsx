@@ -12,7 +12,7 @@ const SplashScreen = () => {
   }, []);
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={Colors.background} />
+      {/* <StatusBar backgroundColor={Colors.background} /> */}
       <Image
         source={require('../../assets/images/logo.png')}
         style={styles.logo}

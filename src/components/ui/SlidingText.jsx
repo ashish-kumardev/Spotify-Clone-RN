@@ -28,7 +28,7 @@ const SlidingText = ({text, fontSize, fontFamily}) => {
   useEffect(() => {
     if (textWidth > containerWidth) {
       const repeatValue = withRepeat(
-        withTiming(-textWidth + 160, {
+        withTiming(-textWidth + 130, {
           duration: 6000,
           easing: Easing.linear,
         }),
