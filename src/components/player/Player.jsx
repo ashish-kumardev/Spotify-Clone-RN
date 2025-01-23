@@ -18,12 +18,10 @@ import {useSharedState} from '../../hooks/useSharedState';
 import FullScreenPlayer from './FullScreenPlayer';
 import AirPlayer from './AirPlayer';
 import {usePlayerStore} from '../../state/usePlayerStore';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const MIN_PLAYER_HEIGHT = BOTTOM_TAB_HEIGHT + 60;
 const MAX_PLAYER_HEIGHT = screenHeight;
-
-// console.log({MAX_PLAYER_HEIGHT, MIN_PLAYER_HEIGHT});
-// console.log({MIN_VALUE: -MAX_PLAYER_HEIGHT + MIN_PLAYER_HEIGHT});
 
 const withPlayer = WrappedComponent => {
   return React.memo(props => {
@@ -31,8 +29,9 @@ const withPlayer = WrappedComponent => {
     const isExpanded = useSharedValue(false);
     const isScroll = useSharedValue(false);
     const {currentPlayingTrack} = usePlayerStore();
-
     const scrollRef = useRef(null);
+
+    const safeAreaInsets = useSafeAreaInsets();
 
     // for ios
     const onScroll = useAnimatedScrollHandler({
@@ -55,13 +54,18 @@ const withPlayer = WrappedComponent => {
     });
 
     const panGesture = Gesture.Pan()
-      .onChange(() => {
-        // console.log({translationY: translationY.value}, 'onChange...........');
-        if (translationY.value <= -602) {
-          console.log({isScroll: isScroll.value}, 'onChange...........');
-          isScroll.value = true;
-        }
-      })
+      // .onChange(() => {
+      //   console.log(
+      //     {
+      //       scrollValue: isScroll.value,
+      //       translationY: translationY.value,
+      //     },
+      //     'OnChange................',
+      //   );
+      //   if (translationY.value <= -602) {
+      //     isScroll.value = true;
+      //   }
+      // })
       .onUpdate(event => {
         translationY.value = Math.max(
           Math.min(
@@ -73,7 +77,7 @@ const withPlayer = WrappedComponent => {
         );
       })
       .onEnd(event => {
-        console.log({event: event.translationY}, 'onEnd.......');
+        // console.log({event: event.translationY}, 'onEnd.......');
         if (event?.translationY < -MIN_PLAYER_HEIGHT / 2) {
           isExpanded.value = true;
           translationY.value = withTiming(
@@ -85,18 +89,21 @@ const withPlayer = WrappedComponent => {
           translationY.value = withTiming(0, {duration: 300});
           // isScroll.value = false;
         }
-      })
-      .enabled(!isScroll.value);
+
+        // console.log({translationY: translationY.value}, 'OnEnd.........');
+      });
+    // .enabled(!isScroll.value);
 
     const animatedContainerStyles = useAnimatedStyle(() => {
       const height = interpolate(
         translationY.value,
         [-MAX_PLAYER_HEIGHT + MIN_PLAYER_HEIGHT, 0],
-        [MAX_PLAYER_HEIGHT, MIN_PLAYER_HEIGHT],
+        [
+          MAX_PLAYER_HEIGHT + safeAreaInsets.top + safeAreaInsets.bottom,
+          MIN_PLAYER_HEIGHT + safeAreaInsets.bottom,
+        ],
         'clamp',
       );
-
-      // console.log({height});
 
       return {
         height,
@@ -122,49 +129,49 @@ const withPlayer = WrappedComponent => {
       };
     });
 
-    // const combinedGesture = Gesture.Simultaneous(Gesture.Native(), panGesture);
+    const combinedGesture = Gesture.Simultaneous(panGesture, Gesture.Native());
 
     return (
       <View style={styles.container}>
         <WrappedComponent {...props} />
         {currentPlayingTrack && (
-          // <GestureDetector gesture={combinedGesture}>
-          <Animated.View
-            style={[styles.playerContainer, animatedContainerStyles]}>
-            {/* {Platform.OS === 'ios' ? (
-              <Animated.ScrollView
-                ref={scrollRef}
-                persistentScrollbar
-                pinchGestureEnabled
-                bounces={false}
-                showsVerticalScrollIndicator={false}
-                scrollEventThrottle={1}
-                onScroll={onScroll}
-                contentContainerStyle={styles.expandedPlayer}
-                style={expandedOpacityStyle}>
-                <FullScreenPlayer />
-              </Animated.ScrollView>
-            ) : ( */}
-            <Animated.View style={[expandedOpacityStyle]}>
-              <ScrollView
-                nestedScrollEnabled
-                persistentScrollbar
-                pinchGestureEnabled
-                bounces={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={[styles.expandedPlayer]}
-                scrollEventThrottle={1}>
-                <FullScreenPlayer />
-              </ScrollView>
-            </Animated.View>
-            {/* )} */}
-
+          <GestureDetector gesture={combinedGesture}>
             <Animated.View
-              style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
-              <AirPlayer />
+              style={[styles.playerContainer, animatedContainerStyles]}>
+              {Platform.OS === 'ios' ? (
+                <Animated.ScrollView
+                  ref={scrollRef}
+                  persistentScrollbar
+                  pinchGestureEnabled
+                  bounces={false}
+                  showsVerticalScrollIndicator={false}
+                  scrollEventThrottle={1}
+                  onScroll={onScroll}
+                  contentContainerStyle={styles.expandedPlayer}
+                  style={expandedOpacityStyle}>
+                  <FullScreenPlayer />
+                </Animated.ScrollView>
+              ) : (
+                <Animated.View style={[expandedOpacityStyle]}>
+                  <ScrollView
+                    nestedScrollEnabled
+                    persistentScrollbar
+                    pinchGestureEnabled
+                    bounces={false}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={[styles.expandedPlayer]}
+                    scrollEventThrottle={1}>
+                    <FullScreenPlayer />
+                  </ScrollView>
+                </Animated.View>
+              )}
+
+              <Animated.View
+                style={[styles.collapsedPlayer, collapsedOpacityStyle]}>
+                <AirPlayer isExpanded={isExpanded} />
+              </Animated.View>
             </Animated.View>
-          </Animated.View>
-          // </GestureDetector>
+          </GestureDetector>
         )}
       </View>
     );

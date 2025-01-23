@@ -8,11 +8,11 @@ const SplashScreen = () => {
   useEffect(() => {
     setTimeout(() => {
       resetAndNavigate('BottomTab');
-    }, 3000);
+    }, 1500);
   }, []);
   return (
     <View style={styles.container}>
-      {/* <StatusBar backgroundColor={Colors.background} /> */}
+      <StatusBar hidden />
       <Image
         source={require('../../assets/images/logo.png')}
         style={styles.logo}

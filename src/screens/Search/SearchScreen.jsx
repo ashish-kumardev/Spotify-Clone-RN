@@ -6,6 +6,7 @@ import {fontR, screenHeight} from '../../utils/Scaling';
 import Icon from '../../components/ui/Icon';
 import CustomText from '../../components/ui/CustomText';
 import {Fonts} from '../../utils/Constants';
+import withPlayer from '../../components/player/Player';
 
 const SearchScreen = () => {
   return (
@@ -21,7 +22,7 @@ const SearchScreen = () => {
   );
 };
 
-export default SearchScreen;
+export default withPlayer(SearchScreen);
 
 const styles = StyleSheet.create({
   container: {

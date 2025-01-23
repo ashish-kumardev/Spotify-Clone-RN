@@ -6,6 +6,7 @@ import Icon from '../../components/ui/Icon';
 import CustomText from '../../components/ui/CustomText';
 import {fontR, screenHeight} from '../../utils/Scaling';
 import {Fonts} from '../../utils/Constants';
+import withPlayer from '../../components/player/Player';
 
 const LibraryScreen = () => {
   return (
@@ -21,7 +22,7 @@ const LibraryScreen = () => {
   );
 };
 
-export default LibraryScreen;
+export default withPlayer(LibraryScreen);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text} from 'react-native';
+import {FlatList, View} from 'react-native';
 import React from 'react';
 import CustomSafeAreaView from '../../components/ui/CustomSafeAreaView';
 import withPlayer from '../../components/player/Player';
@@ -22,11 +22,11 @@ const HomeScreen = () => {
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         style={{paddingTop: 20}}
+        ListFooterComponent={() => <View></View>}
+        ListFooterComponentStyle={{marginBottom: 90}}
       />
     </CustomSafeAreaView>
   );
 };
 
 export default withPlayer(HomeScreen);
-
-const styles = StyleSheet.create({});

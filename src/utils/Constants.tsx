@@ -16,7 +16,7 @@ export enum Fonts {
     Bold = 'Satoshi-Bold',
 }
 
-export const BOTTOM_TAB_HEIGHT = Platform.OS == 'ios' ? 90 : 70
+export const BOTTOM_TAB_HEIGHT = Platform.OS === 'ios' ? 90 : 70
 
 export const darkenColor = (hex: string, amount = 100) => {
     let color = hex?.replace('#', '')

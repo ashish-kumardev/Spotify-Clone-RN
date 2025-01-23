@@ -16,14 +16,16 @@ import SlidingText from '../ui/SlidingText';
 import {fontR} from '../../utils/Scaling';
 import CustomText from '../ui/CustomText';
 import Icon from '../ui/Icon';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const AirPlayer = () => {
+const AirPlayer = ({isExpanded}) => {
   const {expandPlayer} = useSharedState();
   const [colors, setColors] = useState(['#666', '#666']);
   const progress = useProgress();
   const {state} = usePlaybackState();
   const isPlaying = state === 'playing';
   const {play, pause, currentPlayingTrack} = usePlayerStore();
+  const safeAreaInsets = useSafeAreaInsets();
 
   useEffect(() => {
     const url = currentPlayingTrack?.artwork_uri;
@@ -55,9 +57,15 @@ const AirPlayer = () => {
   };
 
   return (
-    <LinearGradient style={styles.container} colors={colors}>
+    <LinearGradient
+      style={[styles.container, {marginBottom: safeAreaInsets.bottom}]}
+      colors={colors}>
       <View style={styles.flexRowBetween}>
-        <TouchableOpacity onPress={expandPlayer}>
+        <TouchableOpacity
+          onPress={() => {
+            expandPlayer();
+            isExpanded.value = true;
+          }}>
           <View style={[styles.flexRow]}>
             <Image
               source={currentPlayingTrack?.artwork_uri}

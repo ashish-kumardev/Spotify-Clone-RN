@@ -21,7 +21,7 @@ const CustomTabBar = ({state, navigation}) => {
       style={[
         styles.tabBarContainer,
         animateStyle,
-        {paddingBottom: safeAreaInsets.bottom},
+        {bottom: safeAreaInsets.bottom},
       ]}>
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
@@ -79,5 +79,6 @@ const styles = StyleSheet.create({
   tabItem: {
     justifyContent: 'center',
     alignItems: 'center',
+    // backgroundColor: 'red',
   },
 });

@@ -3,7 +3,7 @@ import React from 'react';
 import {Colors, Fonts} from '../../utils/Constants';
 import {usePlayerStore} from '../../state/usePlayerStore';
 import CustomText from '../ui/CustomText';
-import {fontR} from '../../utils/Scaling';
+import {fontR, screenWidth} from '../../utils/Scaling';
 import Icon from '../ui/Icon';
 
 const TrackItem = ({item}) => {
@@ -22,6 +22,7 @@ const TrackItem = ({item}) => {
       <View style={styles.flexRowBetween}>
         <View style={styles.flexRow}>
           <Image source={item?.artwork_uri} style={styles.img} />
+
           <View style={styles.trackInfo}>
             <CustomText
               numberOfLines={1}
@@ -33,11 +34,15 @@ const TrackItem = ({item}) => {
               {item.title}
             </CustomText>
 
-            <CustomText numberOfLines={1} fontSize={fontR(8)}>
+            <CustomText
+              numberOfLines={1}
+              fontSize={fontR(7)}
+              style={{opacity: 0.8}}>
               {item?.artist?.name}
             </CustomText>
           </View>
         </View>
+
         <Icon
           name="ellipsis-horizontal-sharp"
           size={fontR(14)}
@@ -75,5 +80,6 @@ const styles = StyleSheet.create({
   },
   trackInfo: {
     width: '65%',
+    gap: 2,
   },
 });

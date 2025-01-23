@@ -11,7 +11,7 @@ import CustomText from './CustomText';
 
 const SlidingText = ({text, fontSize, fontFamily}) => {
   const [textWidth, setTextWidth] = useState(0);
-  const containerWidth = Dimensions.get('window').width - 130;
+  const containerWidth = Dimensions.get('window').width - 160;
   const translateX = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -28,7 +28,7 @@ const SlidingText = ({text, fontSize, fontFamily}) => {
   useEffect(() => {
     if (textWidth > containerWidth) {
       const repeatValue = withRepeat(
-        withTiming(-textWidth + 130, {
+        withTiming(-textWidth + 160, {
           duration: 6000,
           easing: Easing.linear,
         }),

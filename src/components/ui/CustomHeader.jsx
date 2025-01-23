@@ -3,10 +3,12 @@ import React from 'react';
 import CustomText from './CustomText';
 import {Fonts} from '../../utils/Constants';
 import {fontR} from '../../utils/Scaling';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const CustomHeader = ({title}) => {
+  const safeAreaInsets = useSafeAreaInsets();
   return (
-    <View style={styles.flexRow}>
+    <View style={{gap: 10, marginTop: safeAreaInsets.top}}>
       <Image
         source={require('../../assets/images/logo_text.png')}
         style={styles.img}
@@ -24,9 +26,6 @@ const CustomHeader = ({title}) => {
 export default CustomHeader;
 
 const styles = StyleSheet.create({
-  flexRow: {
-    gap: 10,
-  },
   img: {
     width: 140,
     height: 50,

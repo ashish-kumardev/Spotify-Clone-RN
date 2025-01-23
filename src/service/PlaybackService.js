@@ -5,7 +5,6 @@ export const setupPlayer = async () => {
   try {
     await TrackPlayer.getActiveTrackIndex();
   } catch (error) {
-    console.log({error}, 'setupPlayer error');
     await TrackPlayer.setupPlayer();
   }
 };
