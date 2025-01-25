@@ -9,9 +9,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import CustomText from './CustomText';
 
-const SlidingText = ({text, fontSize, fontFamily}) => {
+const SlidingText = React.memo(({text, fontSize, fontFamily}) => {
   const [textWidth, setTextWidth] = useState(0);
-  const containerWidth = Dimensions.get('window').width - 160;
+  const containerWidth = Dimensions.get('window').width - 130;
+  
   const translateX = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -27,7 +28,7 @@ const SlidingText = ({text, fontSize, fontFamily}) => {
 
   useEffect(() => {
     if (textWidth > containerWidth) {
-      const repeatValue = withRepeat(
+      translateX.value = withRepeat(
         withTiming(-textWidth + 160, {
           duration: 6000,
           easing: Easing.linear,
@@ -35,7 +36,6 @@ const SlidingText = ({text, fontSize, fontFamily}) => {
         -1,
         true,
       );
-      translateX.value = repeatValue;
     } else {
       translateX.value = 0;
     }
@@ -53,7 +53,7 @@ const SlidingText = ({text, fontSize, fontFamily}) => {
       </Animated.View>
     </View>
   );
-};
+});
 
 export default SlidingText;
 

@@ -65,18 +65,20 @@ const AirPlayer = ({isExpanded}) => {
           onPress={() => {
             expandPlayer();
             isExpanded.value = true;
-          }}>
-          <View style={[styles.flexRow]}>
+          }}
+          style={{width: '75%'}}>
+          <View style={[styles.flexRow, {width: '100%'}]}>
             <Image
               source={currentPlayingTrack?.artwork_uri}
               style={styles.img}
             />
-            <View style={{width: '62%'}}>
+            <View style={{width: '75%'}}>
               <SlidingText
                 text={currentPlayingTrack?.title}
                 fontFamily={Fonts.Bold}
                 fontSize={fontR(8)}
               />
+
               <CustomText
                 fontFamily={Fonts.Medium}
                 fontSize={fontR(6)}
@@ -130,6 +132,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
   },
   flexRow: {
     flexDirection: 'row',
